@@ -1,0 +1,42 @@
+apiVersion: beta/v1
+starRank:
+  rate: 1.1
+build:
+  skaffold:
+    file: .staroid/skaffold.yaml
+deploy:
+  implements: open-datastudio/ray-cluster
+  paramGroups:
+    - name: Ray Head
+      params:
+      - name: "Instance type"
+        type: STRING
+        defaultValue: standard-2
+        options:
+        - name: standard-2 (2 CPUs, 8GB mem)
+          value: standard-2
+        - name: standard-4 (4 CPUs, 16GB mem)
+          value: standard-4
+        - name: standard-8 (8 CPUs, 32GB mem)
+          value: standard-8
+        paths:
+        - Deployment:ray-head:spec.template.metadata.labels["pod.staroid.com/instance-type"]
+    - name: Ray Workers
+      params:
+      - name: "Instance type"
+        type: STRING
+        defaultValue: standard-4
+        options:
+        - name: standard-2 (2 CPUs, 8GB mem)
+          value: standard-2
+        - name: standard-4 (4 CPUs, 16GB mem)
+          value: standard-4
+        - name: standard-8 (8 CPUs, 32GB mem)
+          value: standard-8
+        paths:
+        - Deployment:ray-worker:spec.template.metadata.labels["pod.staroid.com/instance-type"]
+      - name: "Num replicas"
+        type: NUMBER
+        defaultValue: 3
+        paths:
+        - Deployment:ray-worker:spec.replicas

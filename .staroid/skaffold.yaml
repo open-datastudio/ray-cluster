@@ -1,0 +1,13 @@
+apiVersion: skaffold/v2beta1
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - .staroid/k8s/ray-cluster.yaml
+  statusCheckDeadlineSeconds: 300    
+profiles:
+  - name: minikube
+    patches:
+      - op: add
+        path: /deploy/kubectl/manifests/0
+        value: .staroid/k8s/minikube.yaml

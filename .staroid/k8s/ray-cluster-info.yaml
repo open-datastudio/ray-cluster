@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ray-cluster-info
+  labels:
+    # see https://docs.staroid.com/project/dependency.html
+    dependency.staroid.com/export: ray-cluster-info
+data:
+  RAY_ADDRESS: "ray-head.{{.Namespace}}:6379"
