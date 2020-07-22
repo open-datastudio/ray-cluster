@@ -4,6 +4,7 @@ deploy:
   kubectl:
     manifests:
       - .staroid/k8s/ray-cluster.yaml
+      - .staroid/k8s/ray-cluster-info.yaml
   statusCheckDeadlineSeconds: 300    
 profiles:
   - name: minikube
