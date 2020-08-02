@@ -12,3 +12,20 @@ profiles:
       - op: add
         path: /deploy/kubectl/manifests/0
         value: .staroid/k8s/minikube.yaml
+portForward:
+  - resourceType: Service
+    resourceName: ray-head
+    address: 0.0.0.0
+    port: 6379
+  - resourceType: Service
+    resourceName: ray-head
+    address: 0.0.0.0
+    port: 6380
+  - resourceType: Service
+    resourceName: ray-head
+    address: 0.0.0.0
+    port: 6381
+  - resourceType: Service
+    resourceName: ray-dashboard
+    address: 0.0.0.0
+    port: 8265
