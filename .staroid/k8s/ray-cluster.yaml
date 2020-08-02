@@ -13,7 +13,7 @@ spec:
       port: 8265
   selector:
     component: ray-head
-
+---
 # Ray head node service, allowing worker pods to discover the head node.
 apiVersion: v1
 kind: Service
