@@ -61,6 +61,10 @@ spec:
         pod.staroid.com/isolation: dedicated
         pod.staroid.com/instance-type: standard-2
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 100
+    
       # If the head node goes down, the entire cluster (including all worker
       # nodes) will go down as well. If you want Kubernetes to bring up a new
       # head node in this case, set this to "Always," else set it to "Never."
@@ -131,6 +135,9 @@ spec:
         pod.staroid.com/isolation: dedicated
         pod.staroid.com/instance-type: standard-4
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 100
       restartPolicy: Always
       volumes:
       - name: dshm
