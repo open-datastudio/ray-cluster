@@ -26,5 +26,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Build docker image
       run: |
+        git clone https://github.com/ray-project/ray.git
+        cd ray
         ./build-docker.sh --python-version ${{ matrix.python-version }}
         docker images
