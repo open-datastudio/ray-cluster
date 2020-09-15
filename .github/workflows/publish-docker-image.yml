@@ -18,6 +18,10 @@ jobs:
     steps:
     - name: Checkout latest code
       uses: actions/checkout@v2
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      # access it through ${{ steps.get_version.outputs.VERSION }}
     - name: Clone and patch
       run: |
         git clone https://github.com/ray-project/ray.git
