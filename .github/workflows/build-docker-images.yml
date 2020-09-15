@@ -26,7 +26,8 @@ jobs:
         cd ray
         git checkout $RAY_CHECKOUT
 
-        .staroid/ray_patch.sh patch ray ${{ matrix.python-version }}
+        # patch
+        ../ray_patch.sh patch . ${{ matrix.python-version }}
 
         # print patched files
         cat docker/base-deps/Dockerfile
