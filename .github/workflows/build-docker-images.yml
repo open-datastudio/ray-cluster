@@ -38,4 +38,6 @@ jobs:
       run: |
         cd ray
         ./build-docker.sh
+    - name: Print image
+      run: |
         docker images

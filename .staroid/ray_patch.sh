@@ -29,12 +29,13 @@ if [ "$OP" == "patch" ]; then
     PY_VER=`echo $PYTHON_VERSION | sed 's/\([0-9]\)[.]\([0-9]\).*/\1\2/g'`
     RAY_WHEEL_URL=`eval echo "$RAY_WHEEL_URL"`
     $SED_INPLACE "s|WHEEL_URL=.*.whl\"|WHEEL_URL=\"${RAY_WHEEL_URL}\"|g" $RAY_HOME/build-docker.sh
+    $SED_INPLACE "s|set -x|set -x; set -e|g" $RAY_HOME/build-docker.sh
 
     # patch PATH
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
     # patch PATH in profile
-    $SED_INPLACE "s/\> \/etc\/profile.d\/conda.sh/\>\> \/home\/ray\/.bash_profile/g" ${RAY_HOME}/docker/base-deps/Dockerfile
+    $SED_INPLACE "s/ \/etc\/profile.d\/conda.sh/\> \/home\/ray\/.bash_profile/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
     # patch kubectl installation section
     $SED_INPLACE "s/apt-key add/sudo apt-key add/g" ${RAY_HOME}/docker/base-deps/Dockerfile
