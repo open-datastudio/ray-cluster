@@ -20,9 +20,28 @@ jobs:
     steps:
     - name: Checkout latest code
       uses: actions/checkout@v2
-    - name: Build docker image
+    - name: Clone and patch
       run: |
         git clone https://github.com/ray-project/ray.git
         cd ray
-        ./build-docker.sh --python-version ${{ matrix.python-version }}
+        git checkout $RAY_CHECKOUT
+
+        # patch miniconda python version
+        sed -i 's/python=3.7.7/python=${{ matrix.python-version }}/g' docker/base-deps/Dockerfile
+
+        # patch wheel url
+        PY_VER=`echo ${{ matrix.python-version }} | sed 's/\([0-9]\)[.]\([0-9]\).*/\1\2/g'`
+        RAY_WHEEL_URL=eval "$RAY_WHEEL_URL"
+        sed -i "s|WHEEL_URL=.*.whl\"|WHEEL_URL=\"${RAY_WHEEL_URL}\"|g" build-docker.sh
+
+        # print patched files
+        cat docker/base-deps/Dockerfile
+        cat build-docker.sh
+      env:
+        RAY_CHECKOUT=daabe6bb1f09726c464639b7cc4e81201797027b
+        RAY_WHEEL_URL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp${PY_VER}-cp${PY_VER}m-manylinux1_x86_64.whl"
+    - name: Build image
+      run: |
+        cd ray
+        ./build-docker.sh
         docker images
