@@ -38,8 +38,8 @@ jobs:
         cat docker/base-deps/Dockerfile
         cat build-docker.sh
       env:
-        RAY_CHECKOUT=daabe6bb1f09726c464639b7cc4e81201797027b
-        RAY_WHEEL_URL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp${PY_VER}-cp${PY_VER}m-manylinux1_x86_64.whl"
+        RAY_CHECKOUT: daabe6bb1f09726c464639b7cc4e81201797027b
+        RAY_WHEEL_URL: https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp${PY_VER}-cp${PY_VER}m-manylinux1_x86_64.whl
     - name: Build image
       run: |
         cd ray
