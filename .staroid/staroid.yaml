@@ -1,10 +1,29 @@
+# Staroid project configuration file.
+# Reference https://docs.staroid.com/references/staroid_yaml.html.
+# Use online validator https://staroid.com/site/validator.
 apiVersion: beta/v1
+
+# Learn more about StarRank https://staroid.com/site/starrank.
 starRank:
-  rate: 1.0
-  funds:
+  rate: 1.0 # community rate.
+  upstream: # when upstream is defined, contributors of the listed projects are get funded.
   - project: ray-project/ray
     weight: 100
 build:
   skaffold:
     file: .staroid/skaffold.yaml
-deploy: {}
+deploy:
+  paramGroups:
+  - name: Misc
+    collapsed: true
+    params:
+    - name: start-head
+      description: Start ray head node on start. 'true' or 'false'
+      type: STRING
+      optional: false
+      defaultValue: "true"
+      options:
+      - name: "True"
+        value: "true"
+      - name: "False"
+        value: "false"
