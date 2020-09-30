@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-        - 3.6.12
+        - 3.6.9
         - 3.7.7
     env:
       DEFAULT_PYTHON_VERSION: 3.7.7
@@ -24,33 +24,20 @@ jobs:
       # access it through ${{ steps.get_version.outputs.VERSION }}
     - name: Clone and patch
       run: |
-        git clone https://github.com/ray-project/ray.git
-        cd ray
-        git checkout $RAY_CHECKOUT
-
-        # patch
-        ../.staroid/ray_patch.sh patch . ${{ matrix.python-version }}
-
-        # print patched files
-        cat docker/base-deps/Dockerfile
-        cat build-docker.sh
+        .staroid/build.sh {{ matrix.python-version }}
       env:
-        RAY_CHECKOUT: daabe6bb1f09726c464639b7cc4e81201797027b
-    - name: Build image
-      run: |
-        cd ray
-        ./build-docker.sh
+        BUILD_WHEEL: true
+        IMAGE: opendatastudio/ray:latest
     - name: Tag image
       run: |
-        docker tag rayproject/ray:latest opendatastudio/ray:latest-py${{ matrix.python-version }}
-        docker tag rayproject/ray:latest opendatastudio/ray:${{ steps.get_version.outputs.VERSION }}-py${{ matrix.python-version }}
+        docker tag opendatastudio/ray:latest opendatastudio/ray:latest-py${{ matrix.python-version }}
+        docker tag opendatastudio/ray:latest opendatastudio/ray:${{ steps.get_version.outputs.VERSION }}-py${{ matrix.python-version }}
 
         if [ "$DEFAULT_PYTHON_VERSION" == "${{ matrix.python-version }}" ]; then
-          docker tag rayproject/ray:latest opendatastudio/ray:latest
-          docker tag rayproject/ray:latest opendatastudio/ray:${{ steps.get_version.outputs.VERSION }}
+          docker tag opendatastudio/ray:latest opendatastudio/ray:${{ steps.get_version.outputs.VERSION }}
         fi
     - name: Push image
-      run: |-        
+      run: |-
         docker images
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
