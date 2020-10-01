@@ -11,6 +11,8 @@ RAT_CHECKOUT=0dcfa9ed6c7d43f37115a45edd3ee70fdb3fc077
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
+echo "PYTHON_VERSION=$PYTHON_VERSION, SHORT_VER=$SHORT_VER"
+
 # Checkout ray source
 git clone https://github.com/ray-project/ray.git
 cd ray
@@ -34,10 +36,19 @@ if [ "$BUILD_WHEEL" == "true" ]; then
         git commit python/ray/autoscaler/_private/command_runner.py -m "increase ray up timeout"
 
         # Uncomment followings to build wheel for only single python version.
-        #sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
-        #sed -ie "/^chmod/a PYTHONS=\(\"cp37-cp37m\"\)" python/build-wheel-manylinux1.sh
-        #git commit python/build-wheel-manylinux1.sh -m "update"
-        #cat python/build-wheel-manylinux1.sh
+        if [ "BUILD_WHEEL_SINGLE_VERSION" == "true" ]; then
+                WHL_STRING="cp36-cp36m"
+            if [ "$SHORT_VER" == "36" ]; then
+            elif [ "$SHORT_VER" == "37" ]; then
+                WHL_STRING="cp37-cp37m"
+            elif [ "$SHORT_VER" == "38" ]; then
+                WHL_STRING="cp38-cp38"
+            fi
+            sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
+            sed -ie "/^chmod/a PYTHONS=\(\"$WHL_STRING\"\)" python/build-wheel-manylinux1.sh
+            git commit python/build-wheel-manylinux1.sh -m "update"
+            cat python/build-wheel-manylinux1.sh
+        fi
 
         # current commit
         COMMIT=`git rev-parse HEAD`
