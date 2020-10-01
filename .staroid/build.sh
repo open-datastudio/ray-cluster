@@ -14,8 +14,8 @@ SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g
 echo "PYTHON_VERSION=$PYTHON_VERSION, SHORT_VER=$SHORT_VER"
 
 # Checkout ray source
-git clone https://github.com/ray-project/ray.git
-cd ray
+git clone https://github.com/ray-project/ray.git ray-py$SHORT_VER
+cd ray-py$SHORT_VER
 git checkout $RAY_CHECKOUT
 
 # true to build .whl from source (will take about 3 hours).
