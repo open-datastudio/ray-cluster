@@ -37,8 +37,8 @@ if [ "$BUILD_WHEEL" == "true" ]; then
 
         # Uncomment followings to build wheel for only single python version.
         if [ "BUILD_WHEEL_SINGLE_VERSION" == "true" ]; then
-                WHL_STRING="cp36-cp36m"
             if [ "$SHORT_VER" == "36" ]; then
+                WHL_STRING="cp36-cp36m"
             elif [ "$SHORT_VER" == "37" ]; then
                 WHL_STRING="cp37-cp37m"
             elif [ "$SHORT_VER" == "38" ]; then
