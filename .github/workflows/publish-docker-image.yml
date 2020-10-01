@@ -25,7 +25,7 @@ jobs:
       # access it through ${{ steps.get_version.outputs.VERSION }}
     - name: Clone and patch
       run: |
-        .staroid/build.sh {{ matrix.python-version }}
+        .staroid/build.sh ${{ matrix.python-version }}
       env:
         BUILD_WHEEL: true
         BUILD_WHEEL_SINGLE_VERSION: true

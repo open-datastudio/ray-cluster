@@ -22,7 +22,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Clone and patch
       run: |
-        .staroid/build.sh {{ matrix.python-version }}
+        .staroid/build.sh ${{ matrix.python-version }}
       env:
         BUILD_WHEEL: false
         BUILD_WHEEL_SINGLE_VERSION: true
