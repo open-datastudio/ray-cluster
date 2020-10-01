@@ -24,9 +24,10 @@ jobs:
       run: |
         .staroid/build.sh ${{ matrix.python-version }}
       env:
-        BUILD_WHEEL: false
-        BUILD_WHEEL_SINGLE_VERSION: true
+        BUILD_WHEEL: "false"
+        BUILD_WHEEL_SINGLE_VERSION: "true"
         IMAGE: opendatastudio/ray:latest
+        PUSH_IMAGE: "false"
     - name: Print image
       run: |
         docker images
