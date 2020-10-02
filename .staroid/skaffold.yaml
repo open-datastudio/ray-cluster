@@ -15,7 +15,7 @@ build:
       custom:
         buildCommand: .staroid/build.sh 3.8.3
   local:
-    concurrency: 3
+    concurrency: 1
 deploy:
   kubectl:
     manifests:
