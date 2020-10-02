@@ -7,7 +7,7 @@ set -x
 set -e
 pwd
 
-RAT_CHECKOUT=0dcfa9ed6c7d43f37115a45edd3ee70fdb3fc077
+RAT_CHECKOUT=c17169dc110ed0699eefab04ca17537eb68ce713
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
