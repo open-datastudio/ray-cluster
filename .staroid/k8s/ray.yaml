@@ -50,7 +50,7 @@ spec:
       containers:
       - name: ray-py3-7-7
         image: ray-py3-7-7 # skaffold adds postfix
-      - name: ray-py3-6-9
-        image: ray-py3-6-9
-      - name: ray-py3-8-3
-        image: ray-py3-8-3
+      #- name: ray-py3-6-9
+      #  image: ray-py3-6-9
+      #- name: ray-py3-8-3
+      #  image: ray-py3-8-3

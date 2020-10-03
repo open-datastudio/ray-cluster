@@ -7,14 +7,17 @@ set -x
 set -e
 pwd
 
-RAT_CHECKOUT=c17169dc110ed0699eefab04ca17537eb68ce713
+#RAY_REPO=https://github.com/ray-project/ray.git
+#RAY_CHECKOUT=c17169dc110ed0699eefab04ca17537eb68ce713
+RAY_REPO=https://github.com/open-datastudio/ray.git
+RAY_CHECKOUT=master-staroid-button
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
 echo "PYTHON_VERSION=$PYTHON_VERSION, SHORT_VER=$SHORT_VER"
 
 # Checkout ray source
-git clone https://github.com/ray-project/ray.git ray-py$SHORT_VER
+git clone $RAY_REPO ray-py$SHORT_VER
 cd ray-py$SHORT_VER
 git checkout $RAY_CHECKOUT
 
