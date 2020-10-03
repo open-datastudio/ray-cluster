@@ -66,7 +66,7 @@ data:
       account:
       ske:
       ske_region:
-      project: "GITHUB/open-datastudio/ray:master-staroid"
+      project: "GITHUB/open-datastudio/ray-cluster:master-staroid"
       image_from_project: true
       python_version: 3.7.7
       use_internal_ips: true
@@ -78,6 +78,8 @@ data:
         labels:
           component: ray-head
           pod.staroid.com/spot: "false" # use on-demand instance for head.
+          pod.staroid.com/isolation: dedicated
+          pod.staroid.com/instance-type: standard-4
       spec:
         automountServiceAccountToken: true
         restartPolicy: Never
@@ -85,6 +87,8 @@ data:
         - name: dshm
           emptyDir:
             medium: Memory
+        - name: tmp-volume
+          emptyDir: {}
         - name: nfs-volume
           persistentVolumeClaim:
             claimName: nfs
@@ -105,6 +109,8 @@ data:
           volumeMounts:
             - mountPath: /dev/shm
               name: dshm
+            - mountPath: /tmp
+              name: tmp-volume
             - mountPath: /nfs
               name: nfs-volume
           resources:
@@ -118,7 +124,7 @@ data:
             - name: MY_CPU_REQUEST
               valueFrom:
                 resourceFieldRef:
-                  resource: requests.cpu
+                  resource: limits.cpu
             - name: RAY_ADDRESS
               value: "auto"
     worker_nodes:
@@ -138,6 +144,8 @@ data:
           - name: dshm
             emptyDir:
                 medium: Memory
+          - name: tmp-volume
+            emptyDir: {}
           - name: nfs-volume
             persistentVolumeClaim:
               claimName: nfs
@@ -154,6 +162,8 @@ data:
             volumeMounts:
             - mountPath: /dev/shm
               name: dshm
+            - mountPath: /tmp
+              name: tmp-volume
             - mountPath: /nfs
               name: nfs-volume
             resources:
@@ -167,4 +177,4 @@ data:
             - name: MY_CPU_REQUEST
               valueFrom:
                 resourceFieldRef:
-                  resource: requests.cpu
+                  resource: limits.cpu
