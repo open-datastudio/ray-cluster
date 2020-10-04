@@ -6,14 +6,14 @@ build:
       context: .
       custom:
         buildCommand: .staroid/build.sh 3.7.7
-    # - image: ray-py3-6-9
-    #   context: .
-    #   custom:
-    #     buildCommand: .staroid/build.sh 3.6.9
-    # - image: ray-py3-8-3
-    #   context: .
-    #   custom:
-    #     buildCommand: .staroid/build.sh 3.8.3
+    - image: ray-py3-6-9
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.6.9
+    - image: ray-py3-8-3
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.8.3
   local:
     concurrency: 1
 deploy:

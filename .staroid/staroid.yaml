@@ -21,15 +21,6 @@ deploy:
       defaultValue: 5
       paths:
       - Job:launch:spec.template.spec.containers[0].env[1].value
-    - name: Worker node isolation
-      defaultValue: "sandboxed"
-      options:
-      - name: "Sandboxed"
-        value: "sandboxed"
-      - name: "Dedicated"
-        value: "dedicated"
-      paths:
-      - Job:launch:spec.template.spec.containers[0].env[4].value
     - name: Worker node spot instance
       defaultValue: "true"
       options:

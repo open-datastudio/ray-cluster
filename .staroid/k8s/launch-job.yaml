@@ -38,7 +38,7 @@ spec:
         - name: WORKER_MEM
           value: 4Gi
         - name: WORKER_ISOLATION
-          value: sandboxed
+          value: dedicated
         - name: WORKER_SPOT
           value: "true"
         - name: WORKER_INSTANCE_TYPE
@@ -79,7 +79,7 @@ data:
           component: ray-head
           pod.staroid.com/spot: "false" # use on-demand instance for head.
           pod.staroid.com/isolation: dedicated
-          pod.staroid.com/instance-type: standard-4
+          pod.staroid.com/instance-type: WORKER_INSTANCE_TYPE
       spec:
         automountServiceAccountToken: true
         restartPolicy: Never
