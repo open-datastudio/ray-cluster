@@ -1,0 +1,56 @@
+# derived from https://github.com/ray-project/ray/blob/master/doc/kubernetes/ray-cluster.yaml
+
+# Ray dashboard service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard
+  annotations:
+    service.staroid.com/link: "show"
+spec:
+  ports:
+    - name: dashboard
+      port: 8265
+  selector:
+    component: ray-head
+---
+# Ray serve port
+apiVersion: v1
+kind: Service
+metadata:
+  name: serve
+spec:
+  ports:
+    - name: ray-serve
+      port: 8000
+  selector:
+    component: ray-head
+---
+# 'ray up' commmand manually create head and worker node,
+# while 'ray up' command needs read image name to use.
+# While skaffold adds postfix image version tag (e.g. ray-py-3-7-7:aser2oww) based on hash,
+# 'ray up' command can not use static image name like 'ray-py-3-7-7'.
+# Therefore create a 0 replica deployment resource that list all the
+# images built in this project. 'ray-up' command can retrieve this deployment resource
+# to get docker image name to use.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ray-images
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: ray-images
+  template:
+    metadata:
+      labels:
+        app: ray-images
+    spec:
+      containers:
+      - name: ray-py3-7-7
+        image: ray-py3-7-7 # skaffold adds postfix
+      - name: ray-py3-6-9
+        image: ray-py3-6-9
+      - name: ray-py3-8-3
+        image: ray-py3-8-3

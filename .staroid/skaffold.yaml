@@ -1,9 +1,27 @@
 apiVersion: skaffold/v2beta1
 kind: Config
+build:
+  artifacts:
+    - image: ray-py3-7-7
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.7.7
+    - image: ray-py3-6-9
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.6.9
+    - image: ray-py3-8-3
+      context: .
+      custom:
+        buildCommand: .staroid/build.sh 3.8.3
+  local:
+    concurrency: 1
 deploy:
   kubectl:
     manifests:
-      - .staroid/k8s/ray-cluster.yaml
+      - .staroid/k8s/ray.yaml
+      - .staroid/k8s/nfs.yaml
+      - .staroid/k8s/launch-job.yaml
   statusCheckDeadlineSeconds: 300    
 profiles:
   - name: minikube

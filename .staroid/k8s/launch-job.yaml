@@ -1,0 +1,180 @@
+# Job that launches ray cluster.
+# The job runs 'ray up' command when instance run via GUI launcher.
+# Therefore, instance created by 'ray up' command should skip this job.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: launch
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: true
+      containers:
+      - name: ray-py3-7-7
+        image: ray-py3-7-7
+        command: ["bash", "-c"]
+        args:
+        - |
+          [ "$LAUNCH" == "true" ] &&
+          pip install -q staroid kubernetes &&
+          cp /ray-cluster-config/staroid.yaml /tmp/staroid.yaml &&
+          sed -i "s/MAX_WORKERS/$MAX_WORKERS/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_CPU/$WORKER_CPU/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_MEM/$WORKER_MEM/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_SPOT/$WORKER_SPOT/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_ISOLATION/$WORKER_ISOLATION/g" /tmp/staroid.yaml &&
+          sed -i "s/WORKER_INSTANCE_TYPE/$WORKER_INSTANCE_TYPE/g" /tmp/staroid.yaml &&
+          ray up -y /tmp/staroid.yaml ||
+          echo "let ray cli create cluster"
+        env:
+        # do not change order of envs, while staroid.yaml launcher subtitude value based on index
+        - name: LAUNCH
+          value: "true"
+        - name: MAX_WORKERS
+          value: 5
+        - name: WORKER_CPU
+          value: 2
+        - name: WORKER_MEM
+          value: 4Gi
+        - name: WORKER_ISOLATION
+          value: dedicated
+        - name: WORKER_SPOT
+          value: "true"
+        - name: WORKER_INSTANCE_TYPE
+          value: "standard-4"
+        volumeMounts:
+        - name: cluster-config-volume
+          mountPath: /ray-cluster-config
+      volumes:
+      - name: cluster-config-volume
+        configMap:
+          name: ray-cluster-config
+  backoffLimit: 0
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ray-cluster-config
+data:
+  staroid.yaml: |
+    cluster_name: staroid
+    max_workers: MAX_WORKERS
+    provider:
+      type: staroid
+      access_token:
+      account:
+      ske:
+      ske_region:
+      project: "GITHUB/open-datastudio/ray-cluster:master-staroid"
+      image_from_project: true
+      python_version: 3.7.7
+      use_internal_ips: true
+    head_node:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        generateName: ray-head-
+        labels:
+          component: ray-head
+          pod.staroid.com/spot: "false" # use on-demand instance for head.
+          pod.staroid.com/isolation: dedicated
+          pod.staroid.com/instance-type: WORKER_INSTANCE_TYPE
+      spec:
+        automountServiceAccountToken: true
+        restartPolicy: Never
+        volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+        - name: tmp-volume
+          emptyDir: {}
+        - name: nfs-volume
+          persistentVolumeClaim:
+            claimName: nfs
+
+        containers:
+        - name: ray-node
+          imagePullPolicy: Always
+          image: rayproject/autoscaler
+          command: ["/bin/bash", "-c", "--"]
+          args: ["touch ~/.bashrc; trap : TERM INT; sleep infinity & wait;"]
+          ports:
+            - containerPort: 6379 # Redis port.
+            - containerPort: 6380 # Redis port.
+            - containerPort: 6381 # Redis port.
+            - containerPort: 12345 # Ray internal communication.
+            - containerPort: 12346 # Ray internal communication.
+
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /tmp
+              name: tmp-volume
+            - mountPath: /nfs
+              name: nfs-volume
+          resources:
+            requests:
+              cpu: 4000m
+              memory: 8Gi
+            limits:
+              cpu: 4000m
+              memory: 8Gi
+          env:
+            - name: MY_CPU_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu
+            - name: RAY_ADDRESS
+              value: "auto"
+    worker_nodes:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        generateName: ray-worker-
+        labels:
+          component: ray-worker
+          pod.staroid.com/spot: "WORKER_SPOT"
+          pod.staroid.com/isolation: WORKER_ISOLATION
+          pod.staroid.com/instance-type: WORKER_INSTANCE_TYPE
+        spec:
+          serviceAccountName: default
+          restartPolicy: Never
+          volumes:
+          - name: dshm
+            emptyDir:
+                medium: Memory
+          - name: tmp-volume
+            emptyDir: {}
+          - name: nfs-volume
+            persistentVolumeClaim:
+              claimName: nfs
+          containers:
+          - name: ray-node
+            imagePullPolicy: Always
+            image: rayproject/autoscaler
+            command: ["/bin/bash", "-c", "--"]
+            args: ["touch ~/.bashrc; trap : TERM INT; sleep infinity & wait;"]
+            ports:
+            - containerPort: 12345 # Ray internal communication.
+            - containerPort: 12346 # Ray internal communication.
+
+            volumeMounts:
+            - mountPath: /dev/shm
+              name: dshm
+            - mountPath: /tmp
+              name: tmp-volume
+            - mountPath: /nfs
+              name: nfs-volume
+            resources:
+              requests:
+                cpu: WORKER_CPU
+                memory: WORKER_MEM
+              limits:
+                cpu: WORKER_CPU
+                memory: WORKER_MEM
+            env:
+            - name: MY_CPU_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  resource: limits.cpu

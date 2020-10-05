@@ -14,29 +14,20 @@ jobs:
     strategy:
       matrix:
         python-version:
-        - 3.6.12
+        - 3.6.9
         - 3.7.7
+        - 3.8.3
     steps:
     - name: Checkout latest code
       uses: actions/checkout@v2
     - name: Clone and patch
       run: |
-        git clone https://github.com/ray-project/ray.git
-        cd ray
-        git checkout $RAY_CHECKOUT
-
-        # patch
-        ../.staroid/ray_patch.sh patch . ${{ matrix.python-version }}
-
-        # print patched files
-        cat docker/base-deps/Dockerfile
-        cat build-docker.sh
+        .staroid/build.sh ${{ matrix.python-version }}
       env:
-        RAY_CHECKOUT: daabe6bb1f09726c464639b7cc4e81201797027b
-    - name: Build image
-      run: |
-        cd ray
-        ./build-docker.sh
+        BUILD_WHEEL: "false"
+        BUILD_WHEEL_SINGLE_VERSION: "true"
+        IMAGE: opendatastudio/ray:latest
+        PUSH_IMAGE: "false"
     - name: Print image
       run: |
         docker images
