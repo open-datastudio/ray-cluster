@@ -1,10 +1,9 @@
 # Ray cluster
 
-This repository provides ability to run [ray](https://ray.io) cluster on [Staroid](https://staroid.com).
+This repository provides ability to run [Ray](https://ray.io) cluster on [Staroid](https://staroid.com).
 
-THe repository includes
+The repository includes
 
- - Ray docker image build and publish to [dockerhub](https://hub.docker.com/repository/docker/opendatastudio/ray) using a [github action](https://github.com/open-datastudio/ray-cluster/blob/master/.github/workflows/publish-docker-image.yml)
  - Target project to deploy when launching ray using ray [Staroid node provider](https://github.com/ray-project/ray/tree/master/python/ray/autoscaler/staroid)
 
 ## Getting started
@@ -42,4 +41,4 @@ $ # Try running a Ray program with 'ray.init(address="auto")'.
 $ ray down ray/python/ray/autoscaler/staroid/example-full.yaml
 ```
 
-See https://docs.ray.io/en/latest/cluster/cloud.html#staroid for more details.
+See https://docs.ray.io/en/master/cluster/cloud.html#staroid for more details.

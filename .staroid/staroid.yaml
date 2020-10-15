@@ -30,9 +30,6 @@ deploy:
         value: "false"
       paths:
       - Job:launch:spec.template.spec.containers[0].env[5].value
-  - name: Workers (dedicated)
-    collapsed: true
-    params:
     - name: Instance type
       description: Worker instance type
       defaultValue: "standard-4"
@@ -47,21 +44,6 @@ deploy:
         value: "gpu-1"
       paths:
       - Job:launch:spec.template.spec.containers[0].env[6].value
-  - name: Workers (sandboxed)
-    collapsed: true
-    params:
-    - name: CPU
-      description: number of cpu on each worker
-      type: NUMBER
-      defaultValue: 2
-      paths:
-      - Job:launch:spec.template.spec.containers[0].env[2].value
-    - name: Memory
-      description: Memory on each worker
-      type: STRING
-      defaultValue: 4Gi
-      paths:
-      - Job:launch:spec.template.spec.containers[0].env[3].value
   - name: Misc
     collapsed: true
     params:
