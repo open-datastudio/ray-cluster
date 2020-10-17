@@ -40,7 +40,7 @@ if [ "$OP" == "patch" ]; then
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
     # patch PATH in profile
-    $SED_INPLACE "s/ \/etc\/profile.d\/conda.sh/\> \/home\/ray\/.bash_profile/g" ${RAY_HOME}/docker/base-deps/Dockerfile
+    $SED_INPLACE "s/ \/etc\/profile.d\/conda.sh/\> \/home\/ray\/.bashrc/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
     # patch kubectl installation section
     $SED_INPLACE "s/apt-key add/sudo apt-key add/g" ${RAY_HOME}/docker/base-deps/Dockerfile
