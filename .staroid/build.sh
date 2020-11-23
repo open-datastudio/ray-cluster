@@ -7,10 +7,8 @@ set -x
 set -e
 pwd
 
-#RAY_REPO=https://github.com/ray-project/ray.git
-#RAY_CHECKOUT=c17169dc110ed0699eefab04ca17537eb68ce713
-RAY_REPO=https://github.com/open-datastudio/ray.git
-RAY_CHECKOUT=master-staroid-button
+RAY_REPO=https://github.com/ray-project/ray.git
+RAY_CHECKOUT=643c07e451f003fdce5f9dae4d32ade41a4a53c3
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
