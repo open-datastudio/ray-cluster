@@ -59,8 +59,8 @@ if [ "$BUILD_WHEEL" == "true" ]; then
             --rm -i \
             -w /ray \
             -v `pwd`:/ray \
-            rayproject/arrow_linux_x86_64_base:python-3.8.0 \
-            /ray/python/build-wheel-manylinux1.sh
+            quay.io/pypa/manylinux2014_x86_64 \
+            /ray/python/build-wheel-manylinux2014.sh
     fi
 
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
