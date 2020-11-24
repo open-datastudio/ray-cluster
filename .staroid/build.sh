@@ -96,7 +96,7 @@ cp python/requirements* docker/ray-ml
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
 
 # print images
-docker tag rayproject/ray-ml:latest-gpu $IMAGE
+docker tag rayproject/ray-ml:nightly-gpu $IMAGE
 docker images
 
 # verify image hash are all different.
