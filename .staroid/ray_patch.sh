@@ -36,6 +36,9 @@ if [ "$OP" == "patch" ]; then
     # build ray-ml
     $SED_INPLACE "s/\"ray-deps\" \"ray\"/\"ray-deps\" \"ray\" \"ray-ml\"/g" $RAY_HOME/build-docker.sh
 
+    # patch PATH
+    $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
+
     # remove tensorflow from pip.
     # tensorflow need to be installed using conda, because
     # tensorflow is currently built for cuda 10.1
