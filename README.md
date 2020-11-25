@@ -41,4 +41,4 @@ $ # Try running a Ray program with 'ray.init(address="auto")'.
 $ ray down ray/python/ray/autoscaler/staroid/example-full.yaml
 ```
 
-See https://docs.ray.io/en/master/cluster/cloud.html#staroid for more details.
+See https://docs.ray.io/en/master/cluster/cloud.html#kubernetes for more details.
