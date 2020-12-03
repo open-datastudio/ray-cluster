@@ -66,8 +66,8 @@ data:
       account:
       ske:
       ske_region:
-      project: "GITHUB/open-datastudio/ray-cluster:master-staroid"
-      image_from_project: true
+      project: "GITHUB/open-datastudio/ray-cluster:master
+      image_from_project: false
       python_version: 3.7.7
       use_internal_ips: true
     head_node:
@@ -178,3 +178,12 @@ data:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+    head_setup_commands:
+      # install staroid and kubernetes packages. Staroid node provider depends on them which autoscaler will use.
+      - pip install -q staroid kubernetes
+      # install jupyterlab
+      - pip install -q jupyterlab
+      - ln -s /nfs /home/ray/nfs
+      - nohup bash -c 'jupyter-lab --ip="*" --NotebookApp.token="" --NotebookApp.password="" --NotebookApp.allow_origin="*" --NotebookApp.notebook_dir="/home/ray"' &
+      # show 'notebook' link in staroid management console to access jupyter notebook.
+      - 'echo -e "kind: Service\napiVersion: v1\nmetadata:\n  name: notebook\n  annotations:\n    service.staroid.com/link: show\nspec:\n  ports:\n  - name: http\n    port: 8888\n  selector:\n    component: ray-head" | kubectl apply -f -'
