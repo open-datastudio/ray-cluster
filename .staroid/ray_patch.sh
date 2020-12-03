@@ -39,6 +39,12 @@ if [ "$OP" == "patch" ]; then
     # patch PATH
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
+    # in case of py38, atari-py package installation fails without few os packages
+    $SED_INPLACE "s/RUN \$HOME/RUN sudo apt-get update \&\& sudo apt-get install -y g++ cmake zlib1g-dev \&\& \$HOME/g" ${RAY_HOME}/docker/ray-deps/Dockerfile
+    $SED_INPLACE "s/RUN \$HOME/RUN sudo apt-get update \&\& sudo apt-get install -y g++ cmake zlib1g-dev \&\& \$HOME/g" ${RAY_HOME}/docker/ray/Dockerfile
+    $SED_INPLACE "s/\(\&\& sudo rm.*\)/\1 \&\& sudo apt-get autoremove -y cmake g++ \&\& sudo rm -rf \/var\/lib\/apt\/lists\/\* \&\& sudo apt-get clean/g" ${RAY_HOME}/docker/ray-deps/Dockerfile
+    $SED_INPLACE "s/\(\&\& sudo rm.*\)/    \1 \&\& sudo apt-get autoremove -y cmake g++ \&\& sudo rm -rf \/var\/lib\/apt\/lists\/\* \&\& sudo apt-get clean/g" ${RAY_HOME}/docker/ray/Dockerfile
+
     # remove tensorflow from pip.
     # tensorflow need to be installed using conda, because
     # tensorflow is currently built for cuda 10.1
