@@ -45,10 +45,10 @@ if [ "$BUILD_WHEEL" == "true" ]; then
             elif [ "$SHORT_VER" == "38" ]; then
                 WHL_STRING="cp38-cp38"
             fi
-            sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
-            sed -ie "/^chmod/a PYTHONS=\(\"$WHL_STRING\"\)" python/build-wheel-manylinux1.sh
-            git commit python/build-wheel-manylinux1.sh -m "update"
-            cat python/build-wheel-manylinux1.sh
+            sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux2014.sh
+            sed -ie "/^chmod/a PYTHONS=\(\"$WHL_STRING\"\)" python/build-wheel-manylinux2014.sh
+            git commit python/build-wheel-manylinux2014.sh -m "update"
+            cat python/build-wheel-manylinux2014.sh
         fi
 
         # current commit
