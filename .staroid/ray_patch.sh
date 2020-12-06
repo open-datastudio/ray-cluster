@@ -37,7 +37,7 @@ if [ "$OP" == "patch" ]; then
     $SED_INPLACE "s/\"ray-deps\" \"ray\"/\"ray-deps\" \"ray\" \"ray-ml\"/g" $RAY_HOME/build-docker.sh
 
     # patch gpu base image name. Remove after https://github.com/ray-project/ray/pull/12375 merge
-    $SED_INPLACE "s/cudnn7d/cudnn/g" $RAY_HOME/build-docker.sh
+    $SED_INPLACE "s/cudnn7d/cudnn7/g" $RAY_HOME/build-docker.sh
 
     # patch PATH
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
