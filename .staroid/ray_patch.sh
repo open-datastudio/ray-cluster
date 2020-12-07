@@ -36,47 +36,11 @@ if [ "$OP" == "patch" ]; then
     # build ray-ml
     $SED_INPLACE "s/\"ray-deps\" \"ray\"/\"ray-deps\" \"ray\" \"ray-ml\"/g" $RAY_HOME/build-docker.sh
 
+    # patch gpu base image name. Remove after https://github.com/ray-project/ray/pull/12375 merge
+    $SED_INPLACE "s/cudnn7d/cudnn7/g" $RAY_HOME/build-docker.sh
+
     # patch PATH
     $SED_INPLACE "s/\/root/\/home\/ray/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-
-    # patch PATH in profile
-    $SED_INPLACE "s/ \/etc\/profile.d\/conda.sh/\> \/home\/ray\/.bash_profile/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-
-    # patch kubectl installation section
-    $SED_INPLACE "s/apt-key add/sudo apt-key add/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-    $SED_INPLACE "s/touch \/etc/sudo touch \/etc/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-    $SED_INPLACE "s/tee -a \/etc/sudo tee -a \/etc/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-
-    # patch apt-get
-    $SED_INPLACE "s/apt-get/sudo apt-get/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-    $SED_INPLACE "s/rm -rf \/var/sudo rm -rf \/var/g" ${RAY_HOME}/docker/base-deps/Dockerfile
-    $SED_INPLACE "s/apt-get/sudo apt-get/g" ${RAY_HOME}/docker/ray-ml/Dockerfile
-
-    # patch rm
-    $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray-deps/Dockerfile
-    $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray/Dockerfile
-    $SED_INPLACE "s/ rm / sudo rm /g" ${RAY_HOME}/docker/ray-ml/Dockerfile
-
-    # Add ray user & install sudo
-    # lines until 'ARG DEBIAN_FRONTNED ...'
-    #
-    # install tzdata here to initialize tzdata in non-interactive mode.
-    # otherwise, tzdata will be installed as a transitive dependency later and show keyboard prompt
-    cat $RAY_HOME/docker/base-deps/Dockerfile | sed '/ARG DEBIAN/q' > /tmp/ray_tmp_docker
-    cat <<EOF >> /tmp/ray_tmp_docker
-RUN apt-get update -y && apt-get install -y sudo tzdata \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
-RUN useradd -ms /bin/bash -d /home/ray ray --uid $RAY_UID --gid $RAY_GID \
-    && usermod -aG sudo ray \
-    && echo 'ray ALL=NOPASSWD: ALL' >> /etc/sudoers
-USER 1000
-ENV HOME=/home/ray
-EOF
-
-    # lines after 'ARG DEBIAN_FRONTNED ...'
-    cat $RAY_HOME/docker/base-deps/Dockerfile | sed '1,/ARG DEBIAN/d' >> /tmp/ray_tmp_docker
-    mv /tmp/ray_tmp_docker $RAY_HOME/docker/base-deps/Dockerfile
 
     # in case of py38, atari-py package installation fails without few os packages
     $SED_INPLACE "s/RUN \$HOME/RUN sudo apt-get update \&\& sudo apt-get install -y g++ cmake zlib1g-dev \&\& \$HOME/g" ${RAY_HOME}/docker/ray-deps/Dockerfile

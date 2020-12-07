@@ -62,3 +62,4 @@ deploy:
 ingress:
 - serviceName: serve
   port: 8000
+  hideOpenButton: true

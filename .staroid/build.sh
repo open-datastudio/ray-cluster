@@ -7,10 +7,8 @@ set -x
 set -e
 pwd
 
-#RAY_REPO=https://github.com/ray-project/ray.git
-#RAY_CHECKOUT=c17169dc110ed0699eefab04ca17537eb68ce713
-RAY_REPO=https://github.com/open-datastudio/ray.git
-RAY_CHECKOUT=master-staroid-button
+RAY_REPO=https://github.com/ray-project/ray.git
+RAY_CHECKOUT=260b07cf0cf2c10c091711cc3d598663133c2dc5
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
@@ -34,10 +32,6 @@ if [ "$BUILD_WHEEL" == "true" ]; then
         sed -i "s/DEFAULT_HTTP_HOST = \"127.0.0.1\"/DEFAULT_HTTP_HOST = \"0.0.0.0\"/g" python/ray/serve/constants.py
         git commit python/ray/serve/constants.py -m "patch serve bind address"
 
-        # increase timeout for 'ray up' command
-        sed -i "s/NODE_START_WAIT_S = 300/NODE_START_WAIT_S = 1200/g" python/ray/autoscaler/_private/command_runner.py
-        git commit python/ray/autoscaler/_private/command_runner.py -m "increase ray up timeout"
-
         # Uncomment followings to build wheel for only single python version.
         if [ "BUILD_WHEEL_SINGLE_VERSION" == "true" ]; then
             if [ "$SHORT_VER" == "36" ]; then
@@ -47,10 +41,10 @@ if [ "$BUILD_WHEEL" == "true" ]; then
             elif [ "$SHORT_VER" == "38" ]; then
                 WHL_STRING="cp38-cp38"
             fi
-            sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux1.sh
-            sed -ie "/^chmod/a PYTHONS=\(\"$WHL_STRING\"\)" python/build-wheel-manylinux1.sh
-            git commit python/build-wheel-manylinux1.sh -m "update"
-            cat python/build-wheel-manylinux1.sh
+            sed -ie "/^PYTHONS=/,+2d" python/build-wheel-manylinux2014.sh
+            sed -ie "/^chmod/a PYTHONS=\(\"$WHL_STRING\"\)" python/build-wheel-manylinux2014.sh
+            git commit python/build-wheel-manylinux2014.sh -m "update"
+            cat python/build-wheel-manylinux2014.sh
         fi
 
         # current commit
@@ -61,8 +55,8 @@ if [ "$BUILD_WHEEL" == "true" ]; then
             --rm -i \
             -w /ray \
             -v `pwd`:/ray \
-            rayproject/arrow_linux_x86_64_base:python-3.8.0 \
-            /ray/python/build-wheel-manylinux1.sh
+            quay.io/pypa/manylinux2014_x86_64 \
+            /ray/python/build-wheel-manylinux2014.sh
     fi
 
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
@@ -98,7 +92,7 @@ cp python/requirements* docker/ray-ml
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
 
 # print images
-docker tag rayproject/ray-ml:latest-gpu $IMAGE
+docker tag rayproject/ray-ml:nightly-gpu $IMAGE
 docker images
 
 # verify image hash are all different.
