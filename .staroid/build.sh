@@ -8,7 +8,7 @@ set -e
 pwd
 
 RAY_REPO=https://github.com/ray-project/ray.git
-RAY_CHECKOUT=260b07cf0cf2c10c091711cc3d598663133c2dc5
+RAY_CHECKOUT=ray-1.2.0
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
