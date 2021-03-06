@@ -61,7 +61,7 @@ if [ "$OP" == "patch" ]; then
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_ml_docker.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_rllib.txt
-    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements_tune.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements_tune.in
 
 elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray/Dockerfile
@@ -73,7 +73,7 @@ elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/python/requirements/requirements.txt
     git checkout ${RAY_HOME}/python/requirements_ml_docker.txt
     git checkout ${RAY_HOME}/python/requirements_rllib.txt
-    git checkout ${RAY_HOME}/python/requirements/requirements_tune.txt
+    git checkout ${RAY_HOME}/python/requirements/requirements_tune.in
 else
     echo "Invalid operation $OP"
     exit 1
