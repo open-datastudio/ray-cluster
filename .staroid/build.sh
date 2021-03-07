@@ -86,7 +86,7 @@ cat docker/ray/Dockerfile
 cat docker/ray-ml/Dockerfile
 
 # cp requirements to ray-ml dir
-cp python/requirements* docker/ray-ml
+cp python/requirements.txt python/requirements_* python/requirements/* docker/ray-ml
 
 # build docker image
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
