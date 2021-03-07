@@ -8,7 +8,7 @@ set -e
 pwd
 
 RAY_REPO=https://github.com/ray-project/ray.git
-RAY_CHECKOUT=260b07cf0cf2c10c091711cc3d598663133c2dc5
+RAY_CHECKOUT=5fc761c562006432ed6fd43066ba3d3c7b9c6ac5
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
@@ -61,12 +61,12 @@ if [ "$BUILD_WHEEL" == "true" ]; then
 
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
 else
-    if [ "$SHORT_VER" == "36" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp36-cp36m-manylinux1_x86_64.whl"
+    if [ "$SHORT_VER" == "36" ]; then              
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "37" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp37-cp37m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "38" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp38-cp38-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp38-cp38-manylinux2014_x86_64.whl"
     fi
 fi
 
