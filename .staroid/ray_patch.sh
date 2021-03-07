@@ -63,6 +63,9 @@ if [ "$OP" == "patch" ]; then
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_rllib.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_tune.txt
 
+    # install specific pip version that support --use-deprecated=legacy-resolver option. https://github.com/ray-project/ray/issues/12610
+    $SED_INPLACE "s/libgcc/libgcc pip=20.3/g" ${RAY_HOME}/docker/base-deps/Dockerfile
+
 elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray/Dockerfile
     git checkout ${RAY_HOME}/docker/ray-deps/Dockerfile
