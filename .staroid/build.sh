@@ -75,7 +75,14 @@ fi
 ../.staroid/ray_patch.sh patch . $WHEEL
 
 # apply additional docker file commands
+if [ "$SHORT_VER" == "36" ] && [ "$GITHUB_ACTIONS" == "true" ]; then
+    # when github action runs python36 build, it stops with no space left error during installing conda install tensorflow-gpu
+    # so in this case, we skip install tensorflow-gpu package install
+    $SED_INPLACE "/tensorflow/d" ../.staroid/Dockerfile_staroid
+fi
+
 cat ../.staroid/Dockerfile_staroid >> docker/ray-ml/Dockerfile
+
 
 # print patched files
 git diff
