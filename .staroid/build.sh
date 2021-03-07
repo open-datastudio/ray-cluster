@@ -3,12 +3,19 @@
 # https://skaffold.dev/docs/pipeline-stages/builders/custom/
 #
 
+# sed
+SED_INPLACE="sed -i"
+uname | grep Darwin > /dev/null
+if [ $? -eq 0 ]; then
+    SED_INPLACE="sed -i .bak"
+fi
+
 set -x
 set -e
 pwd
 
 RAY_REPO=https://github.com/ray-project/ray.git
-RAY_CHECKOUT=260b07cf0cf2c10c091711cc3d598663133c2dc5
+RAY_CHECKOUT=5fc761c562006432ed6fd43066ba3d3c7b9c6ac5
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
@@ -61,12 +68,12 @@ if [ "$BUILD_WHEEL" == "true" ]; then
 
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
 else
-    if [ "$SHORT_VER" == "36" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp36-cp36m-manylinux1_x86_64.whl"
+    if [ "$SHORT_VER" == "36" ]; then              
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "37" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp37-cp37m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "38" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp38-cp38-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-2.0.0.dev0-cp38-cp38-manylinux2014_x86_64.whl"
     fi
 fi
 
@@ -75,7 +82,14 @@ fi
 ../.staroid/ray_patch.sh patch . $WHEEL
 
 # apply additional docker file commands
+if [ "$SHORT_VER" == "36" ] && [ "$GITHUB_ACTIONS" == "true" ]; then
+    # when github action runs python36 build, it stops with no space left error during installing conda install tensorflow-gpu
+    # so in this case, we skip install tensorflow-gpu package install
+    $SED_INPLACE "/tensorflow/d" ../.staroid/Dockerfile_staroid
+fi
+
 cat ../.staroid/Dockerfile_staroid >> docker/ray-ml/Dockerfile
+
 
 # print patched files
 git diff
@@ -86,7 +100,7 @@ cat docker/ray/Dockerfile
 cat docker/ray-ml/Dockerfile
 
 # cp requirements to ray-ml dir
-cp python/requirements* docker/ray-ml
+cp python/requirements.txt python/requirements_* python/requirements/* docker/ray-ml
 
 # build docker image
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
