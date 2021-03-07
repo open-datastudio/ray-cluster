@@ -63,6 +63,9 @@ if [ "$OP" == "patch" ]; then
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_rllib.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements_tune.in
 
+    # Remove botorch
+    $SED_INPLACE "/botorch/d" ${RAY_HOME}/python/requirements/linux-py3.6-requirements_tune.txt
+
 elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray/Dockerfile
     git checkout ${RAY_HOME}/docker/ray-deps/Dockerfile
