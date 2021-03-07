@@ -3,6 +3,13 @@
 # https://skaffold.dev/docs/pipeline-stages/builders/custom/
 #
 
+# sed
+SED_INPLACE="sed -i"
+uname | grep Darwin > /dev/null
+if [ $? -eq 0 ]; then
+    SED_INPLACE="sed -i .bak"
+fi
+
 set -x
 set -e
 pwd
@@ -13,13 +20,6 @@ PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
 echo "PYTHON_VERSION=$PYTHON_VERSION, SHORT_VER=$SHORT_VER"
-
-# sed
-SED_INPLACE="sed -i"
-uname | grep Darwin > /dev/null
-if [ $? -eq 0 ]; then
-    SED_INPLACE="sed -i .bak"
-fi
 
 # Checkout ray source
 git clone $RAY_REPO ray-py$SHORT_VER
