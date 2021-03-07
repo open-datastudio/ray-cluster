@@ -62,11 +62,11 @@ if [ "$BUILD_WHEEL" == "true" ]; then
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
 else
     if [ "$SHORT_VER" == "36" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp36-cp36m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "37" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp37-cp37m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "38" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp38-cp38-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp38-cp38-manylinux2014_x86_64.whl"
     fi
 fi
 
