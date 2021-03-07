@@ -87,6 +87,14 @@ cat docker/ray-ml/Dockerfile
 
 # cp requirements to ray-ml dir
 cp python/requirements_* python/requirements/* docker/ray-ml
+# ray-ml/Dockerfile hardcoded to read linux-py3.7-requirements_tune.txt regardless of the python version to build, in this release (1.2.0)
+# so rename appropriate version requirments file to the hardcoded name
+
+if [ "$SHORT_VER" == "36" ]; then
+    mv docker/ray-ml/linux-py3.6-requirements_tune.txt docker/ray-ml/linux-py3.7-requirements_tune.txt
+elif [ "$SHORT_VER" == "38" ]; then
+    mv docker/ray-ml/linux-py3.8-requirements_tune.txt docker/ray-ml/linux-py3.7-requirements_tune.txt
+fi
 
 # build docker image
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
