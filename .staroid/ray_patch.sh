@@ -58,10 +58,13 @@ if [ "$OP" == "patch" ]; then
     #
     # conda install cuda 10.1 binaries together with tensorflow and it works well.
     # Therefore Dockerfile_staroid will install tensorflow using conda.
-    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_ml_docker.txt
     $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_rllib.txt
-    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements_tune.txt
+    $SED_INPLACE "/tensorflow/d" ${RAY_HOME}/python/requirements/requirements_tune.in
+
+    # install specific pip version that support --use-deprecated=legacy-resolver option. https://github.com/ray-project/ray/issues/12610
+    $SED_INPLACE "s/libgcc/libgcc pip=20.3/g" ${RAY_HOME}/docker/base-deps/Dockerfile
 
 elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray/Dockerfile
@@ -70,10 +73,10 @@ elif [ "$OP" == "reset" ]; then
     git checkout ${RAY_HOME}/docker/ray-ml/Dockerfile
     git checkout ${RAY_HOME}/build-docker.sh
 
-    git checkout ${RAY_HOME}/python/requirements.txt
+    git checkout ${RAY_HOME}/python/requirements/requirements.txt
     git checkout ${RAY_HOME}/python/requirements_ml_docker.txt
     git checkout ${RAY_HOME}/python/requirements_rllib.txt
-    git checkout ${RAY_HOME}/python/requirements_tune.txt
+    git checkout ${RAY_HOME}/python/requirements/requirements_tune.in
 else
     echo "Invalid operation $OP"
     exit 1

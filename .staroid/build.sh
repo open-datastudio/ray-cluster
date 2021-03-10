@@ -8,7 +8,7 @@ set -e
 pwd
 
 RAY_REPO=https://github.com/ray-project/ray.git
-RAY_CHECKOUT=260b07cf0cf2c10c091711cc3d598663133c2dc5
+RAY_CHECKOUT=ray-1.2.0
 PYTHON_VERSION=$1
 SHORT_VER=`echo $PYTHON_VERSION | sed "s/\([0-9]*\)[.]\([0-9]*\)[.][0-9]*/\1\2/g"`
 
@@ -62,11 +62,11 @@ if [ "$BUILD_WHEEL" == "true" ]; then
     WHEEL=`ls .whl/*-cp$SHORT_VER-*`
 else
     if [ "$SHORT_VER" == "36" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp36-cp36m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp36-cp36m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "37" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp37-cp37m-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp37-cp37m-manylinux2014_x86_64.whl"
     elif [ "$SHORT_VER" == "38" ]; then
-        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.1.0.dev0-cp38-cp38-manylinux1_x86_64.whl"
+        WHEEL="https://s3-us-west-2.amazonaws.com/ray-wheels/latest/ray-1.2.0.dev0-cp38-cp38-manylinux2014_x86_64.whl"
     fi
 fi
 
@@ -86,7 +86,15 @@ cat docker/ray/Dockerfile
 cat docker/ray-ml/Dockerfile
 
 # cp requirements to ray-ml dir
-cp python/requirements* docker/ray-ml
+cp python/requirements_* python/requirements/* docker/ray-ml
+
+# ray-ml/Dockerfile hardcoded to read linux-py3.7-requirements_tune.txt regardless of the python version to build, in this release (1.2.0)
+# so rename appropriate version requirments file to the hardcoded name
+if [ "$SHORT_VER" == "36" ]; then
+    mv docker/ray-ml/linux-py3.6-requirements_tune.txt docker/ray-ml/linux-py3.7-requirements_tune.txt
+elif [ "$SHORT_VER" == "38" ]; then
+    mv docker/ray-ml/linux-py3.8-requirements_tune.txt docker/ray-ml/linux-py3.7-requirements_tune.txt
+fi
 
 # build docker image
 ./build-docker.sh --no-cache-build --gpu --python-version $PYTHON_VERSION
